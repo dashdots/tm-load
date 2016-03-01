@@ -1,0 +1,12 @@
+{
+  "name": "tm-load",
+  "version": "0.0.1",
+  "description": "load remote resource(TinyMCS only)",
+  "main": "index.js",
+  "author": "dashdot <dashdot.coder@gmail.com>",
+  "license": "NO LICENSE",
+  "peerDependencies": {
+    "es6-promise": "^3.1.2",
+    "isomorphic-fetch": "^2.2.1"
+  }
+}
