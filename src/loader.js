@@ -6,7 +6,7 @@ require('es6-promise').polyfill();
 require('isomorphic-fetch');
 
 import {forEach, cloneDeep, isArray, isObject, toLower} from 'lodash';
-import Storage from './storage';
+import {getToken} from './storage';
 
 /**
  * Return the api url base
@@ -187,7 +187,7 @@ function _requestWithToken(options, params, body = {}, headers = {}, customToken
   if (params) { cloned.route = _parameterizeRoute(cloned.route, params); }
   const token = Storage.getToken();
   const requestHeaders = Object.assign({}, headers, {
-    'Authorization': 'Bearer ' + (customToken || token),
+    'Authorization': 'Bearer ' + (customToken || getToken()),
   });
   return _callRequest(cloned, body, requestHeaders);
 }
