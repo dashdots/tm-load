@@ -1,7 +1,8 @@
 /**
  * tm-load entry script
  */
-
+ 
+require('object.assign').shim();
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
 

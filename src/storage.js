@@ -1,7 +1,7 @@
 /**
  * Wrap LocalStorage simply
  */
-
+require('object.assign').shim();
 /**
  * Return prefix of storage
  *
