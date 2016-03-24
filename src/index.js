@@ -1,3 +1,4 @@
+require('object.assign').shim();
 import * as loader from './src/loader';
 import * as storage from './src/storage';
 export * from './src/loader';
