@@ -1,8 +1,8 @@
 /**
  * tm-load entry script
  */
- 
-require('object.assign').shim();
+
+const assign = require('object.assign/polyfill')();
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
 
@@ -91,7 +91,7 @@ function _request(isFormData, method, url, body = {}, headers = {}) {
 
   let fetchData = {
     method: toLower(method),
-    headers: Object.assign({}, defaultHeaders, headers),
+    headers: assign({}, defaultHeaders, headers),
   };
 
   if (toLower(method) !== 'get') {
@@ -189,7 +189,7 @@ function _requestWithToken(options, params, body = {}, headers = {}, customToken
   let cloned = cloneDeep(options);
   if (params) { cloned.route = _parameterizeRoute(cloned.route, params); }
   const token = Storage.getToken();
-  const requestHeaders = Object.assign({}, headers, {
+  const requestHeaders = assign({}, headers, {
     'Authorization': 'Bearer ' + (customToken || getToken()),
   });
   return _callRequest(cloned, body, requestHeaders);

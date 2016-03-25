@@ -1,7 +1,7 @@
 /**
  * Wrap LocalStorage simply
  */
-require('object.assign').shim();
+const assign = require('object.assign/polyfill')();
 /**
  * Return prefix of storage
  *
@@ -96,5 +96,5 @@ export const setHydratedState = (state) => {
  * @param  {Any}  value
  */
 export const addHydratedState = (id, value) => {
-  return set('state', Object.assign({}, getHydratedState(), { id: value }));
+  return set('state', assign({}, getHydratedState(), { id: value }));
 };
