@@ -6,8 +6,8 @@ const assign = require('object.assign/polyfill')();
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
 
-import {forEach, cloneDeep, isArray, isObject, toLower} from 'lodash';
-import {getToken} from './storage';
+import { forEach, cloneDeep, isArray, isObject, toLower, isUndefined } from 'lodash';
+import { getToken } from './localStorage';
 
 /**
  * Return the api url base
@@ -15,13 +15,13 @@ import {getToken} from './storage';
  */
 function _getBase() {
   let base = '';
-  if (typeof process !== 'undefined' && typeof process.env !== 'undefined') {
-    if (typeof process.env.API_BASE !== 'undefined') {
+  if (!isUndefined(process) && !isUndefined(process.env)) {
+    if (!isUndefined(process.env.API_BASE)) {
       base = process.env.API_BASE;
-    } else if (typeof window.API_BASE !== 'undefined') {
+    } else if (!isUndefined(window.API_BASE)) {
       base = window.API_BASE;
     }
-  } else if (typeof window.API_BASE !== 'undefined') {
+  } else if (!isUndefined(window.API_BASE)) {
     base = window.API_BASE;
   }
   return base;
@@ -35,13 +35,13 @@ function _getBase() {
  *
  */
 function _transformFormBody(body, formData, originalKey) {
-  let data = cloneDeep(formData);
+  let data = formData;
   forEach(Object.keys(body), (paramKey) => {
     const obj = body[paramKey];
-    const key = typeof originalKey !== 'undefined' ? `${originalKey}[${paramKey}]` : paramKey;
+    const key = !isUndefined(originalKey) ? `${originalKey}[${paramKey}]` : `${paramKey}[]`;
     if (isArray(obj)) {
-      for (let k in obj) {
-        data.append(`${key}[]`, obj[k]);
+      for (const val of obj) {
+        data.append(key, val);
       }
     } else if (isObject(obj)) {
       data = _transformFormBody(obj, data, key);
@@ -69,7 +69,7 @@ function _transformBody(body = {}, isFormData = false) {
  *
  */
 function _transformUrlParams(params = {}) {
-  let formatedParams = [];
+  const formatedParams = [];
   forEach(Object.keys(params), (key) => {
     formatedParams.push(`${key}=` + encodeURIComponent(params[key]));
   });
@@ -86,10 +86,12 @@ function _transformUrlParams(params = {}) {
  *
  */
 function _request(isFormData, method, url, body = {}, headers = {}) {
-  const defaultHeaders = { 'Accept': 'application/json' };
+  const defaultHeaders = {
+    'Accept': 'application/json',
+  };
   let newUrl = cloneDeep(url);
 
-  let fetchData = {
+  const fetchData = {
     method: toLower(method),
     headers: assign({}, defaultHeaders, headers),
   };
@@ -97,7 +99,7 @@ function _request(isFormData, method, url, body = {}, headers = {}) {
   if (toLower(method) !== 'get') {
     fetchData.body = _transformBody(body, isFormData);
   } else {
-    let params = _transformUrlParams(body);
+    const params = _transformUrlParams(body);
     if (params.length > 0) {
       newUrl += '?' + params.join('&');
     }
@@ -153,9 +155,9 @@ function _callRequest({method, route, form, external}, body, headers) {
  */
 function _parameterizeRoute(route, params) {
   let parameterized = cloneDeep(route);
-  forEach(params, (v, k) => {
-    if (typeof v === 'undefined') { console.warn(`error: parameter ${k} was ${v}`); }
-    parameterized = parameterized.replace(':' + k, v);
+  forEach(params, (val, key) => {
+    if (isUndefined(v)) { console.warn(`error: parameter ${key} was ${val}`); }
+    parameterized = parameterized.replace(':' + key, val);
   });
   return parameterized;
 }
@@ -170,7 +172,7 @@ function _parameterizeRoute(route, params) {
  */
 function _publicRequest(options, params, body = {}, headers = {}) {
   if (!body) { body = {}; }
-  let cloned = cloneDeep(options);
+  const cloned = cloneDeep(options);
   if (params) { cloned.route = _parameterizeRoute(cloned.route, params); }
   return _callRequest(cloned, body, headers);
 }
@@ -186,7 +188,7 @@ function _publicRequest(options, params, body = {}, headers = {}) {
  */
 function _requestWithToken(options, params, body = {}, headers = {}, customToken) {
   if (!body) { body = {}; }
-  let cloned = cloneDeep(options);
+  const cloned = cloneDeep(options);
   if (params) { cloned.route = _parameterizeRoute(cloned.route, params); }
   const token = Storage.getToken();
   const requestHeaders = assign({}, headers, {
