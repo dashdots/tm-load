@@ -1,13 +1,20 @@
 /**
  * Wrap LocalStorage simply
  */
-const assign = require('object.assign/polyfill')();
+ import { isUndefined, has, assign as _assign } from 'lodash';
+
+ const assign = () => {
+   if (has(Object, 'assign')) {
+     return Object.assign.call(arguments);
+   }
+   return _assign.call(arguments);
+ };
 /**
  * Return prefix of storage
  *
  */
 export const getPrefix = () => {
-  return typeof window.STORAGE_PREFIX !== 'undefined' ? window.STORAGE_PREFIX : '';
+  return !isUndefined(window, 'STORAGE_PREFIX') ? window.STORAGE_PREFIX : '';
 };
 
 const prefix = getPrefix();
