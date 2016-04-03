@@ -1,6 +1,6 @@
 {
   "name": "tm-load",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "load remote resource(TinyMCS only)",
   "main": "lib/index.js",
   "repository": {
