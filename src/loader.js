@@ -42,13 +42,9 @@ function _transformFormBody(body, formData, originalKey) {
   let data = formData;
   forEach(Object.keys(body), (paramKey) => {
     const obj = body[paramKey];
-    let key = !isUndefined(originalKey) ? `${originalKey}[${paramKey}]` : paramKey;
+    const key = !isUndefined(originalKey) ? `${originalKey}[${paramKey}]` : paramKey;
     if (isArray(obj)) {
-      for (const index in obj) {
-        const val = obj[index];
-        if (key.indexOf('[') === -1) {
-          key = `${key}[${index}]`;
-        }
+      for (const val of obj) {
         if (isObject(val) || isArray(val)) {
           data = _transformFormBody(val, data, key);
         } else {
@@ -58,7 +54,7 @@ function _transformFormBody(body, formData, originalKey) {
     } else if (isObject(obj)) {
       data = _transformFormBody(obj, data, key);
     } else {
-      data.append(key, obj);
+      data.append(`${key}[]`, obj);
     }
   });
   return data;
@@ -85,13 +81,9 @@ function _transformUrlParams(params = {}, formatedParams = [], originalKey) {
   for (const paramKey of Object.keys(params)) {
     const paramKey = keys[index];
     const obj = params[paramKey];
-    let key = !isUndefined(originalKey) ? `${originalKey}[${paramKey}]` : paramKey;
+    const key = !isUndefined(originalKey) ? `${originalKey}[${paramKey}]` : paramKey;
     if (isArray(obj)) {
-      for (const index in obj) {
-        const val = obj[index];
-        if (key.indexOf('[') === -1) {
-          key = `${key}[${index}]`;
-        }
+      for (const val of obj) {
         if (isObject(val) || isArray(val)) {
           data = _transformUrlParams(val, data, key);
         } else {
@@ -101,7 +93,7 @@ function _transformUrlParams(params = {}, formatedParams = [], originalKey) {
     } else if (isObject(obj)) {
       data = _transformUrlParams(obj, data, key);
     } else {
-      data.push(`${key}=` + encodeURIComponent(obj));
+      data.push(`${key}[]=` + encodeURIComponent(val));
     }
   }
   return data;
