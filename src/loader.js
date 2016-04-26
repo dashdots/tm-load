@@ -37,7 +37,7 @@ function _getBase() {
 *
 */
 function _isFile(val) {
- return (has(val, 'preview') && val.preview.indexOf('blob') > -1);
+  return (val instanceof File || val instanceof Blob);
 }
 
 /**
@@ -61,7 +61,7 @@ function _transformFormBody(body, formData, originalKey) {
           data.append(`${key}[${index}]`, val);
         }
       }
-    } else if (isObject(obj)) {
+    } else if (isObject(obj) && !_isFile(obj)) {
       data = _transformFormBody(obj, data, key);
     } else {
       data.append(key, obj);
