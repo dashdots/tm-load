@@ -29,7 +29,7 @@ export default {
     loaders: [
       {
         test: /\.js$/,
-        loaders: ['babel-loader'],
+        loaders: ['babel'],
         exclude: /node_modules/
       },
     ],
