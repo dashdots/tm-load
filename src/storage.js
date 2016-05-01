@@ -7,16 +7,19 @@ if (!has(Object, 'assign')) {
   Object.assign = assign;
 }
 
+const PRE_VAR = 'STORAGE_PREFIX';
+function getStore() {
+  if (isUndefined(window) || isUndefined(window.localStorage) || window.localStorage === null) {
+    return require('node-localstorage').LocalStorage;
+  }
+  return window.localStorage;
+}
+
 /**
  * Return prefix of storage
  *
  */
-export const getPrefix = () => {
-  return !isUndefined(window, 'STORAGE_PREFIX') ? window.STORAGE_PREFIX : '';
-};
-
-const prefix = getPrefix();
-const Store = window.localStorage;
+export const getPrefix = () => (!isUndefined(window, PRE_VAR) ? window[PRE_VAR] : '');
 
 /**
  * Gets an item from localStorage
@@ -25,7 +28,7 @@ const Store = window.localStorage;
  */
 export const get = (id) => {
   try {
-    return JSON.parse(Store.getItem(`${getPrefix()}-${id}`)).value;
+    return JSON.parse(getStore().getItem(`${getPrefix()}-${id}`)).value;
   } catch (err) {
     return null;
   }
@@ -38,7 +41,7 @@ export const get = (id) => {
  *
  */
 export const set = (id, value) => {
-  return Store.setItem(`${getPrefix()}-${id}`, JSON.stringify({ value }));
+  return getStore().setItem(`${getPrefix()}-${id}`, JSON.stringify({ value }));
 };
 
 /**
@@ -46,45 +49,34 @@ export const set = (id, value) => {
  * @param  {String} id
  *
  */
-export const remove = (id) => {
-  return Store.removeItem(`${getPrefix()}-${id}`);
-};
+export const remove = (id) => (getStore().removeItem(`${getPrefix()}-${id}`));
 
 /**
 * Gets an token from localStorage
 *
 */
-export const getToken = () => {
- return get('token');
-};
+export const getToken = () => (get('token'));
 
 /**
 * Sets the token in localStorage
 * @param  {Any} value
 *
 */
-export const setToken = (value) => {
- return set('token', value);
-};
+export const setToken = (value) => (set('token', value));
 
 /**
 * Remove item from localStorage
 * @param  {String} id
 *
 */
-export const removeToken = () => {
- return remove('token');
-};
+export const removeToken = () => (remove('token'));
 
 /**
  * Return state to rehydrate store
  * @return {Object}
  *
  */
-export const getHydratedState = () => {
-  const state = get('state');
-  return state || {};
-};
+export const setHydratedState = (state) => (set('state', state));
 
 /**
  * Sets the hydrated state
@@ -109,6 +101,4 @@ export const addHydratedState = (id, value) => {
  * @param  {string} id
  *
  */
-export const isSet = (id) => {
-  return get(id) !== null;
-};
+export const isSet = (id) => (get(id) !== null);
