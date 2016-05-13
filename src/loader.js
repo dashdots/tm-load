@@ -160,7 +160,7 @@ function _request(isFormData, method, url, body = {}, headers = {}, others = {})
           reject(response);
         }
       })
-      .catch((response) => reject(response));
+      .catch(response => reject(response));
   });
 }
 
@@ -268,7 +268,7 @@ export const generateRequest = (options) => {
  * @param  {Object} useToken
  *
  */
-export const generateCRUDRequests = (baseUrl = '', idVar = '', token = false) => (
+export const generateCRUDRequests = (baseUrl = '', idVar = 'id', token = false) => (
   {
     fetchAll: generateRequest({
       token,
