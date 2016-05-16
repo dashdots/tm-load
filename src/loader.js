@@ -2,11 +2,11 @@
  * tm-load entry script
  */
 
- import { forEach, cloneDeep, isArray, isObject, toLower, isUndefined, has, assign } from 'lodash';
- import { getToken } from './localStorage';
+import 'fetch-everywhere';
+import { forEach, cloneDeep, isArray, isObject, toLower, isUndefined, has, assign } from 'lodash';
+import { getToken } from './localStorage';
 
 require('es6-promise').polyfill();
-require('isomorphic-fetch');
 
 if (!has(Object, 'assign')) {
   Object.assign = assign;
